@@ -24,18 +24,27 @@ def auth_response(request):
     headers = {"Authorization": "Bearer "+access_token}
     r = requests.get(url, headers=headers)
     data = r.json()
+    print(data)
 
     url = "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))"
     headers = {"Authorization": "Bearer "+access_token}
     r = requests.get(url, headers=headers)
     dat = r.json()
-
     print(dat)
+
+    url = "https://api.linkedin.com/v2/me?projection=(id,profilePicture(displayImage~digitalmediaAsset:playableStreams))"
+    headers = {"Authorization": "Bearer "+access_token}
+    r = requests.get(url, headers=headers)
+    image_data = r.json()
+    image_url = image_data['profilePicture']['displayImage~']['elements'][3]['identifiers'][0]['identifier']
+    print(str(image_url))
+
     fname = data['firstName']['localized']['en_US']
     lname = data['lastName']['localized']['en_US']
     id = data['id']
     email = dat['elements'][0]['handle~']['emailAddress']
     
-
-    return HttpResponse('Welcome, '+fname+ ' '+lname+' email : '+email+' ; id : '+id)
+    return render(request,'rough.html',{'fname':fname,'lname':lname,'id':id,'email':email,
+                    'image_url':image_url})
+    #return HttpResponse('Welcome, '+fname+ ' '+lname+' email : '+email+' ; id : '+id+' ,image : ')
 
