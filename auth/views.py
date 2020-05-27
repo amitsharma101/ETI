@@ -24,10 +24,18 @@ def auth_response(request):
     headers = {"Authorization": "Bearer "+access_token}
     r = requests.get(url, headers=headers)
     data = r.json()
-    
+
+    url = "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))"
+    headers = {"Authorization": "Bearer "+access_token}
+    r = requests.get(url, headers=headers)
+    dat = r.json()
+
+    print(dat)
     fname = data['firstName']['localized']['en_US']
     lname = data['lastName']['localized']['en_US']
     id = data['id']
+    email = dat['elements'][0]['handle~']['emailAddress']
+    
 
-    return HttpResponse('Welcome, '+fname+ ' '+lname+' ; id : '+id)
+    return HttpResponse('Welcome, '+fname+ ' '+lname+' email : '+email+' ; id : '+id)
 
