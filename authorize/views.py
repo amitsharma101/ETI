@@ -1,7 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect,HttpResponseRedirect
 from django.http import HttpResponse
 import requests
 import json
+from .models import extendeduser
+from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from .forms import ProfileForm
+
 
 # Create your views here.
 def auth(request):
@@ -35,12 +41,43 @@ def auth_response(request):
     r = requests.get(url, headers=headers)
     image_data = r.json()
     
-    image_url = image_data['profilePicture']['displayImage~']['elements'][3]['identifiers'][0]['identifier']
+    try:
+        image_url = image_data['profilePicture']['displayImage~']['elements'][3]['identifiers'][0]['identifier']
+    except:
+        pass
     fname = data['firstName']['localized']['en_US']
     lname = data['lastName']['localized']['en_US']
     id = data['id']
     email = dat['elements'][0]['handle~']['emailAddress']
-    
-    return render(request,'rough.html',{'fname':fname,'lname':lname,'id':id,'email':email,
-                    'image_url':image_url})
 
+    curr_user = extendeduser.objects.filter(lid=id)
+    if curr_user:
+        user = authenticate(username=email, password=id)
+        login(request, user)
+        return render(request,'auth.html',{'user':user})
+    else:
+        user = User.objects.create_user(username=email, email=email, password=id,first_name=fname,last_name=lname)
+        extd_user = extendeduser(user=user,lid=id)
+        extd_user.save()
+        login(request, user)
+    
+    return redirect('/')
+    
+@login_required
+def profile(request):
+    return render(request,'profile.html')
+
+@login_required
+def logout_user(request):
+    logout(request)
+    return redirect('/')
+
+@login_required
+def edit_profile(request,lid):
+    user = extendeduser.objects.get(lid=lid)
+    form = ProfileForm(request.POST or None,instance=user)
+    
+    if form.is_valid():
+        form.save()
+        return redirect('/profile')
+    return render(request,'edit_profile.html',context={'form':form,'user':user})
