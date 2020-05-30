@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class extendeduser(models.Model):
+    def __str__(self):
+        return self.user.email + ' : ' + self.user.first_name+' '+self.user.last_name
     phone_num = models.CharField(max_length= 15)
     semester = models.IntegerField()
     lid = models.CharField(max_length= 100)
