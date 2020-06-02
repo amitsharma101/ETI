@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table border="2px">
+        <tr>
+            <th>Name</th>
+            <th>Field</th>
+            <th>Value</th>
+            <th></th>
+            <th></th>
+        </tr>
+        {% for value in values %}
+        <tr>  
+            <td>{{ value.1 }}</td>
+            <td>{{ value.2 }}</td>
+            <td>{{ value.3 }}</td>
+            <form action="verify_requests" method="POST">
+                {% csrf_token %}
+            <input type="hidden" id="vid" name="vid" value="{{ value.0 }}">
+            <td><input type="submit" value="save" name='operation'></td>
+            <td><input type="submit" value="delete" name='operation'></td>
+            </form>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

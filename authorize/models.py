@@ -17,8 +17,14 @@ class ProfileFields(models.Model):
     def __str__(self):
         return self.field
     field = models.CharField(max_length=100)
+    verifiable = models.BooleanField(default=False)
 
 class FieldValues(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    field = models.ForeignKey(ProfileFields,on_delete=models.CASCADE)
+    value = models.TextField()
+
+class VerificationRequests(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     field = models.ForeignKey(ProfileFields,on_delete=models.CASCADE)
     value = models.TextField()

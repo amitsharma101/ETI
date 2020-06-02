@@ -7,4 +7,5 @@ urlpatterns = [
     path('profile',views.profile),
     path('edit_profile',views.edit_profile),
     path('logout_user',views.logout_user),
+    path('verify_requests',views.verify_requests,name='verify_requests'),
 ]
