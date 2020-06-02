@@ -6,9 +6,18 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="{{user.extendeduser.lid}}" method='POST'>
+    <form action="edit_profile" method='POST'>
         {% csrf_token %}
-        {{form}}
+        <table>
+        {% for field,value in values.items %}
+        
+                <tr>
+                    <td>{{field}} : </td>
+                    <td><input type="text" name="{{field}}" value="{{value}}"></td>
+                </tr>
+            
+        {% endfor %}
+        </table>
         <input type="submit" value="Save">
     </form>
 </body>

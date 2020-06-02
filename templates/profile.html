@@ -7,13 +7,10 @@
 </head>
 <body>
     <ul>
-        <li>First Name : {{user.first_name}}</li>
-        <li>Last Name : {{user.last_name}}</li>
-        <li>Email : {{user.email}}</li>
-        <li>Phone no : {{user.extendeduser.phone_num}}</li>
-        <li>Semester : {{user.extendeduser.semester}}</li>
-        <li>{{user.extendeduser.lid}}</li>
-        <li><a href="edit_profile/{{user.extendeduser.lid}}">Edit</a></li>
+        {% for field,value in values.items %}
+            <li>{{field}} : {{value}}</li>
+        {% endfor %}
+        <li><a href="edit_profile">Edit</a></li>
     </ul>
 </body>
 </html>

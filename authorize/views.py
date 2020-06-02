@@ -2,11 +2,11 @@ from django.shortcuts import render,redirect,HttpResponseRedirect
 from django.http import HttpResponse
 import requests
 import json
-from .models import extendeduser
+from .models import extendeduser,ProfileFields,FieldValues
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .forms import ProfileForm
+#from .forms import ProfileForm
 
 
 # Create your views here.
@@ -65,7 +65,22 @@ def auth_response(request):
     
 @login_required
 def profile(request):
-    return render(request,'profile.html')
+    current_user = request.user
+    all_fields = ProfileFields.objects.all()
+    
+    fields = {}
+    for field in all_fields:
+        fields[field.field]=field.id
+
+    values = {}
+    for field_name,field_id in fields.items():
+        res = FieldValues.objects.filter(user_id=current_user.id,field_id=field_id)
+        if res:
+            values[field_name] = res[0].value
+        else:
+            values[field_name] = ''
+    print(values)
+    return render(request,'profile.html',{'values':values})
 
 @login_required
 def logout_user(request):
@@ -73,11 +88,49 @@ def logout_user(request):
     return redirect('/')
 
 @login_required
-def edit_profile(request,lid):
-    user = extendeduser.objects.get(lid=lid)
-    form = ProfileForm(request.POST or None,instance=user)
+def edit_profile(request):    
+    if request.method=='GET':
+        current_user = request.user
+        all_fields = ProfileFields.objects.all()
     
-    if form.is_valid():
-        form.save()
+        fields = {}
+        for field in all_fields:
+            fields[field.field]=field.id
+
+        values = {}
+        for field_name,field_id in fields.items():
+            res = FieldValues.objects.filter(user_id=current_user.id,field_id=field_id)
+            if res:
+                values[field_name] = res[0].value
+            else:
+                values[field_name] = ''
+        print(values)
+        return render(request,'edit_profile.html',{'values':values})
+    else:
+        all_fields = ProfileFields.objects.all()
+    
+        fields = {}
+        for field in all_fields:
+            fields[field.field]=field.id
+
+        response = {}
+        for field_name in fields.keys():
+            response[field_name] = request.POST[field_name]
+        print(fields)
+        print(response)
+
+        for field_name,field_id in fields.items():
+            obj = FieldValues.objects.filter(user_id=request.user.id,field_id=field_id)
+            if obj:
+                print(obj)
+                obj = obj[0]
+                obj.value = response[field_name]
+                obj.save()
+            else:
+                obj = FieldValues(user_id=request.user.id,field_id=field_id,value=response[field_name])
+                obj.save()
+
         return redirect('/profile')
-    return render(request,'edit_profile.html',context={'form':form,'user':user})
+
+
+        
