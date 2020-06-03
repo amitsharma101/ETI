@@ -11,7 +11,17 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 
 # Create your views here.
 def auth(request):
+    user = request.user
+    if str(user) == 'AnonymousUser':
+        return redirect('login_user')
+    print('Here')
     return render(request,'auth.html')
+
+def login_user(request):
+    user = request.user
+    if str(user) == 'AnonymousUser':
+        return render(request,'login.html')
+    return redirect('/')
 
 def auth_response(request):
     code = request.GET['code']

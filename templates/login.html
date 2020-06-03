@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            text-align: center; /* !!! */
+        }
+    </style>
+    <div style="
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        /* bring your own prefixes */
+        transform: translate(-50%, -50%);">
+        <a href="https://www.linkedin.com/oauth/v2/authorization?response_type=code&state=987654321&scope=r_emailaddress%20r_liteprofile&client_id=86sbo0a0h4tamv&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Fauth">
+        <img src="{% static "authorize/images/linkedin.png" %}" alt="Login with LinkedIn">
+        </a>
+    </div> 
+</body>
+</html>
