@@ -40,9 +40,11 @@ def auth_response(request):
     headers = {"Authorization": "Bearer "+access_token}
     r = requests.get(url, headers=headers)
     image_data = r.json()
+    print(image_data)
     
     try:
         image_url = image_data['profilePicture']['displayImage~']['elements'][3]['identifiers'][0]['identifier']
+        print(image_url)
     except:
         pass
     fname = data['firstName']['localized']['en_US']
@@ -54,7 +56,7 @@ def auth_response(request):
     if curr_user:
         user = authenticate(username=email, password=id)
         login(request, user)
-        return render(request,'auth.html',{'user':user})
+        return redirect('/')
     else:
         user = User.objects.create_user(username=email, email=email, password=id,first_name=fname,last_name=lname)
         extd_user = extendeduser(user=user,lid=id)
